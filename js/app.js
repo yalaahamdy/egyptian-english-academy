@@ -44,8 +44,8 @@ function initTheme() {
   const themeToggleBtn = document.getElementById("theme-toggle");
   if (!themeToggleBtn) return;
 
-  // Default theme is dark
-  let currentTheme = localStorage.getItem("academy_theme") || "dark";
+  // Default theme is light
+  let currentTheme = localStorage.getItem("academy_theme") || "light";
   document.documentElement.setAttribute("data-theme", currentTheme);
   updateThemeButtonUI(currentTheme);
 
