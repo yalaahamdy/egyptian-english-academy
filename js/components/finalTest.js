@@ -172,6 +172,65 @@ function renderCertificateView(container) {
   /* Large watermark logo image for the background */
   const watermarkIMG = `<img src="icon/logo.png" class="cert-watermark" alt="Egyptian English Academy Watermark">`;
 
+  /* Golden Seal Badge SVG */
+  const goldSealHTML = `
+    <div class="cert-badge-gold">
+      <svg class="cert-badge-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="goldGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff" />
+            <stop offset="25%" stop-color="#fff5a0" />
+            <stop offset="50%" stop-color="#e1ad21" />
+            <stop offset="85%" stop-color="#8d6508" />
+            <stop offset="100%" stop-color="#553a00" />
+          </linearGradient>
+          <linearGradient id="goldGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fffce0" />
+            <stop offset="50%" stop-color="#d4af37" />
+            <stop offset="100%" stop-color="#644e14" />
+          </linearGradient>
+          <linearGradient id="darkRoyal" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#141a2e" />
+            <stop offset="50%" stop-color="#0a0d18" />
+            <stop offset="100%" stop-color="#05060b" />
+          </linearGradient>
+          <path id="textPathTop" d="M 32 100 A 68 68 0 0 1 168 100" fill="none" />
+          <path id="textPathBottom" d="M 32 100 A 68 68 0 0 0 168 100" fill="none" />
+          <g id="wreathBranch">
+            <path d="M 75 142 C 55 125, 55 85, 75 62" fill="none" stroke="url(#goldGrad2)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M 72 135 C 60 137, 52 128, 58 122 C 64 116, 72 122, 72 135 Z" fill="url(#goldGrad1)"/>
+            <path d="M 62 118 C 50 117, 44 107, 51 101 C 58 95, 64 104, 62 118 Z" fill="url(#goldGrad1)"/>
+            <path d="M 57 98 C 45 95, 42 84, 49 79 C 56 74, 61 83, 57 98 Z" fill="url(#goldGrad1)"/>
+            <path d="M 59 78 C 49 73, 50 62, 57 59 C 64 56, 66 65, 59 78 Z" fill="url(#goldGrad1)"/>
+            <path d="M 70 62 C 62 54, 65 44, 72 43 C 79 42, 78 52, 70 62 Z" fill="url(#goldGrad1)"/>
+            <circle cx="65" cy="107" r="2" fill="url(#goldGrad2)"/>
+            <circle cx="60" cy="87" r="2" fill="url(#goldGrad2)"/>
+          </g>
+        </defs>
+        <circle cx="100" cy="100" r="95" fill="url(#goldGrad2)" />
+        <circle cx="100" cy="100" r="91" fill="url(#darkRoyal)" />
+        <circle cx="100" cy="100" r="86" fill="none" stroke="url(#goldGrad1)" stroke-width="2" stroke-dasharray="0 6" stroke-linecap="round" />
+        <circle cx="100" cy="100" r="80" fill="none" stroke="url(#goldGrad2)" stroke-width="1.2" />
+        <text font-family="'Cinzel', serif" font-size="8.2" font-weight="800" fill="url(#goldGrad1)" letter-spacing="0.8">
+          <textPath href="#textPathTop" startOffset="50%" text-anchor="middle">EGYPTIAN ENGLISH ACADEMY</textPath>
+        </text>
+        <text font-family="'Cinzel', serif" font-size="8.2" font-weight="800" fill="url(#goldGrad1)" letter-spacing="0.8">
+          <textPath href="#textPathBottom" startOffset="50%" text-anchor="middle">★ SEAL OF EXCELLENCE ★</textPath>
+        </text>
+        <use href="#wreathBranch" />
+        <use href="#wreathBranch" transform="translate(200, 0) scale(-1, 1)" />
+        <g transform="translate(0, -6)">
+          <polygon points="100,72 133,83 100,94 67,83" fill="url(#goldGrad1)" stroke="#4a3300" stroke-width="0.5" />
+          <path d="M 76,87 L 76,96 C 76,102 124,102 124,96 L 124,87 C 124,90 76,90 76,87 Z" fill="url(#goldGrad2)" stroke="#4a3300" stroke-width="0.5" />
+          <path d="M 100,83 L 122,89 L 122,103" fill="none" stroke="url(#goldGrad1)" stroke-width="1.2" stroke-linecap="round" />
+          <polygon points="120,103 122,108 124,103" fill="url(#goldGrad1)" />
+        </g>
+        <text x="100" y="132" text-anchor="middle" font-family="'Cinzel', serif" font-size="22" font-weight="900" fill="url(#goldGrad1)" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.6))">A1</text>
+        <text x="100" y="146" text-anchor="middle" font-family="'Montserrat', sans-serif" font-size="8" font-weight="800" letter-spacing="2" fill="url(#goldGrad2)">MASTERY</text>
+      </svg>
+    </div>
+  `;
+
   if (!progress.fullName) {
     container.innerHTML = `
       <div class="certificate-section-wrapper cert-name-prompt-wrapper">
@@ -212,62 +271,12 @@ function renderCertificateView(container) {
         
         <div class="cert-content">
           
-          <div class="cert-badge-wrapper">
-            <div class="cert-badge-gold">
-              <svg class="cert-badge-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="goldGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ffffff" />
-                    <stop offset="25%" stop-color="#fff5a0" />
-                    <stop offset="50%" stop-color="#e1ad21" />
-                    <stop offset="85%" stop-color="#8d6508" />
-                    <stop offset="100%" stop-color="#553a00" />
-                  </linearGradient>
-                  <linearGradient id="goldGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#fffce0" />
-                    <stop offset="50%" stop-color="#d4af37" />
-                    <stop offset="100%" stop-color="#644e14" />
-                  </linearGradient>
-                  <linearGradient id="darkRoyal" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#141a2e" />
-                    <stop offset="50%" stop-color="#0a0d18" />
-                    <stop offset="100%" stop-color="#05060b" />
-                  </linearGradient>
-                  <path id="textPathTop" d="M 32 100 A 68 68 0 0 1 168 100" fill="none" />
-                  <path id="textPathBottom" d="M 32 100 A 68 68 0 0 0 168 100" fill="none" />
-                  <g id="wreathBranch">
-                    <path d="M 75 142 C 55 125, 55 85, 75 62" fill="none" stroke="url(#goldGrad2)" stroke-width="2.5" stroke-linecap="round"/>
-                    <path d="M 72 135 C 60 137, 52 128, 58 122 C 64 116, 72 122, 72 135 Z" fill="url(#goldGrad1)"/>
-                    <path d="M 62 118 C 50 117, 44 107, 51 101 C 58 95, 64 104, 62 118 Z" fill="url(#goldGrad1)"/>
-                    <path d="M 57 98 C 45 95, 42 84, 49 79 C 56 74, 61 83, 57 98 Z" fill="url(#goldGrad1)"/>
-                    <path d="M 59 78 C 49 73, 50 62, 57 59 C 64 56, 66 65, 59 78 Z" fill="url(#goldGrad1)"/>
-                    <path d="M 70 62 C 62 54, 65 44, 72 43 C 79 42, 78 52, 70 62 Z" fill="url(#goldGrad1)"/>
-                    <circle cx="65" cy="107" r="2" fill="url(#goldGrad2)"/>
-                    <circle cx="60" cy="87" r="2" fill="url(#goldGrad2)"/>
-                  </g>
-                </defs>
-                <circle cx="100" cy="100" r="95" fill="url(#goldGrad2)" />
-                <circle cx="100" cy="100" r="91" fill="url(#darkRoyal)" />
-                <circle cx="100" cy="100" r="86" fill="none" stroke="url(#goldGrad1)" stroke-width="2" stroke-dasharray="0 6" stroke-linecap="round" />
-                <circle cx="100" cy="100" r="80" fill="none" stroke="url(#goldGrad2)" stroke-width="1.2" />
-                <text font-family="'Cinzel', serif" font-size="8.2" font-weight="800" fill="url(#goldGrad1)" letter-spacing="0.8">
-                  <textPath href="#textPathTop" startOffset="50%" text-anchor="middle">EGYPTIAN ENGLISH ACADEMY</textPath>
-                </text>
-                <text font-family="'Cinzel', serif" font-size="8.2" font-weight="800" fill="url(#goldGrad1)" letter-spacing="0.8">
-                  <textPath href="#textPathBottom" startOffset="50%" text-anchor="middle">★ SEAL OF EXCELLENCE ★</textPath>
-                </text>
-                <use href="#wreathBranch" />
-                <use href="#wreathBranch" transform="translate(200, 0) scale(-1, 1)" />
-                <g transform="translate(0, -6)">
-                  <polygon points="100,72 133,83 100,94 67,83" fill="url(#goldGrad1)" stroke="#4a3300" stroke-width="0.5" />
-                  <path d="M 76,87 L 76,96 C 76,102 124,102 124,96 L 124,87 C 124,90 76,90 76,87 Z" fill="url(#goldGrad2)" stroke="#4a3300" stroke-width="0.5" />
-                  <path d="M 100,83 L 122,89 L 122,103" fill="none" stroke="url(#goldGrad1)" stroke-width="1.2" stroke-linecap="round" />
-                  <polygon points="120,103 122,108 124,103" fill="url(#goldGrad1)" />
-                </g>
-                <text x="100" y="132" text-anchor="middle" font-family="'Cinzel', serif" font-size="22" font-weight="900" fill="url(#goldGrad1)" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.6))">A1</text>
-                <text x="100" y="146" text-anchor="middle" font-family="'Montserrat', sans-serif" font-size="8" font-weight="800" letter-spacing="2" fill="url(#goldGrad2)">MASTERY</text>
-              </svg>
+          <div class="cert-header">
+            <div class="cert-header-decor-line left"></div>
+            <div class="cert-header-logo-container">
+              <img src="icon/logo.png" class="cert-header-logo" alt="Academy Logo">
             </div>
+            <div class="cert-header-decor-line right"></div>
           </div>
           
           <h1 class="cert-main-title">Certificate of Completion</h1>
@@ -288,11 +297,13 @@ function renderCertificateView(container) {
           
           <div class="cert-footer-row">
             <div class="cert-signature-block">
-              <span class="cert-sig-drawing">El-Moallem</span>
+              <span class="cert-sig-drawing">EEA</span>
               <div class="cert-sig-line"></div>
               <span class="cert-sig-name">Egyptian English Academy</span>
               <span class="cert-sig-title">Academy Director</span>
             </div>
+            
+            ${goldSealHTML}
             
             <div class="cert-signature-block">
               <span class="cert-verified-id">

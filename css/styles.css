@@ -419,7 +419,7 @@ button {
 .brand-logo-img {
   width: 44px;
   height: 44px;
-  border-radius: var(--radius-sm);
+  border-radius: 50%;
   object-fit: contain;
   box-shadow: 0 8px 16px var(--primary-glow);
   background-color: var(--bg-tertiary);
