@@ -1,0 +1,467 @@
+/* ==========================================================================
+   Roadmap Page Styles - Premium Gamified Unit Selection & Journey Track
+   ========================================================================== */
+
+.roadmap-header {
+  margin-bottom: 28px;
+}
+
+.roadmap-main-title {
+  font-family: var(--font-en);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(to right, #fff, var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.roadmap-main-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.roadmap-tutor-banner {
+  margin-top: 14px;
+  max-width: 720px;
+}
+
+/* ============================================================
+   1. Unit Selection Grid Board
+   ============================================================ */
+.roadmap-unit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.unit-select-card {
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  border: 1px solid var(--border-color);
+  border-top: 2px solid var(--border-highlight);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: var(--card-shadow-3d);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.unit-select-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-3d-hover);
+  border-color: var(--primary);
+}
+
+.unit-select-card.selected {
+  border-color: var(--primary);
+  background: linear-gradient(180deg, var(--bg-tertiary) 0%, rgba(99, 102, 241, 0.08) 100%);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15), var(--card-shadow-3d-hover);
+  transform: translateY(-4px);
+}
+
+.unit-select-card.selected::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--primary);
+}
+
+.unit-select-card.locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.unit-select-card.locked:hover {
+  transform: none;
+  box-shadow: var(--card-shadow-3d);
+  border-color: var(--border-color);
+}
+
+/* Circular Progress Ring */
+.unit-select-progress {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring-svg {
+  transform: rotate(-90deg);
+}
+
+.ring-bg {
+  stroke: var(--border-color);
+}
+
+.ring-fill {
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.ring-fill.unlocked {
+  stroke: var(--primary);
+}
+
+.ring-fill.completed {
+  stroke: var(--success);
+}
+
+.progress-ring-text {
+  position: absolute;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text-main);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.unit-select-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.unit-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.unit-select-card.selected .unit-label {
+  color: var(--primary);
+}
+
+.unit-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.unit-lock-overlay {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* ============================================================
+   2. Journey Track Timeline
+   ============================================================ */
+.journey-section-title {
+  margin: 28px 0 18px 0;
+  border-top: 1px solid var(--border-color);
+  padding-top: 24px;
+}
+
+.journey-section-title h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--text-main);
+}
+
+.unit-title-highlight {
+  color: var(--primary);
+}
+
+.journey-section-title p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.journey-track-container {
+  position: relative;
+  padding: 16px 0 32px 0;
+  max-width: 720px;
+}
+
+.journey-track-line {
+  position: absolute;
+  left: 22px;
+  top: 16px;
+  bottom: 16px;
+  width: 2px;
+  background: var(--border-color);
+  z-index: 1;
+}
+
+.journey-node {
+  position: relative;
+  display: flex;
+  margin-bottom: 28px;
+  z-index: 2;
+}
+
+.journey-node:last-child {
+  margin-bottom: 0;
+}
+
+.journey-node-dot {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  box-shadow: var(--card-shadow-3d);
+  z-index: 3;
+  transition: all 0.25s ease;
+}
+
+.journey-node.completed .journey-node-dot {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+}
+
+.journey-node.active .journey-node-dot {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.35);
+}
+
+.journey-node.locked {
+  opacity: 0.55;
+}
+
+.journey-node-card {
+  margin-left: 18px;
+  flex: 1;
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  border: 1px solid var(--border-color);
+  border-top: 2px solid var(--border-highlight);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  box-shadow: var(--card-shadow-3d);
+  transition: all 0.25s ease;
+}
+
+.journey-node.active .journey-node-card {
+  border-color: var(--primary);
+  box-shadow: var(--card-shadow-3d-hover);
+}
+
+.journey-node.active .journey-node-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+}
+
+.journey-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.lesson-index {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.journey-node.active .lesson-index {
+  color: var(--primary);
+}
+
+.journey-card-body h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.journey-card-body p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Milestones badge pills inside cards */
+.lesson-milestones-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.milestone-badge {
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.milestone-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.milestone-badge.done {
+  color: var(--success);
+  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.milestone-badge.done .dot {
+  background: var(--success);
+}
+
+.milestone-badge.pending {
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+
+.milestone-badge.pending .dot {
+  background: var(--text-muted);
+  opacity: 0.5;
+}
+
+.journey-card-footer {
+  margin-top: 14px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+}
+
+/* ============================================================
+   3. Graduation Mastery Trophy Node
+   ============================================================ */
+.final-mastery-node .journey-node-card {
+  border: 1.5px dashed var(--accent);
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, rgba(245, 158, 11, 0.03) 100%);
+}
+
+.final-mastery-node.active .journey-node-card {
+  border-style: solid;
+  border-color: var(--accent);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15), var(--card-shadow-3d);
+}
+
+.trophy-dot {
+  font-size: 1.4rem;
+  background: var(--bg-tertiary);
+}
+
+.final-mastery-node.active .trophy-dot {
+  background: linear-gradient(135deg, #fef08a, var(--accent));
+  border-color: var(--accent);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
+}
+
+.gold-text {
+  color: var(--accent) !important;
+}
+
+.final-score-display {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+}
+
+.final-score-display strong {
+  color: var(--accent);
+}
+
+/* Glowing study button for active lessons */
+.study-glow-btn {
+  box-shadow: 0 0 12px var(--primary-glow);
+  position: relative;
+  overflow: hidden;
+}
+
+.study-glow-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: rotate(45deg);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; transition: property 0s; }
+  100% { left: 100%; transition: property 3s; }
+}
+
+/* Responsiveness */
+@media (max-width: 600px) {
+  .roadmap-unit-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+  }
+  
+  .unit-select-card {
+    padding: 10px 6px;
+    min-height: 90px;
+  }
+  
+  .journey-node-card {
+    padding: 12px 14px;
+  }
+  
+  .journey-card-body h3 {
+    font-size: 0.95rem;
+  }
+  
+  .journey-card-body p {
+    font-size: 0.75rem;
+  }
+}
