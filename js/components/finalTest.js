@@ -58,8 +58,8 @@ function renderLockedScreen(container, progress) {
 function renderIntroScreen(container) {
   container.innerHTML = `
     <div class="quiz-container cert-intro-state">
-      <div class="results-icon">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      <div class="cert-intro-logo-container">
+        <img src="icon/logo.png" class="cert-intro-logo" alt="Academy Logo">
       </div>
       <h1>A1 Level Mastery Exam</h1>
       <p class="cert-intro-desc">
@@ -169,15 +169,15 @@ function renderCertificateView(container) {
   /* Flourish SVG divider used above and below the student name */
   const flourishSVG = `<svg class="cert-divider-flourish" viewBox="0 0 300 20" xmlns="http://www.w3.org/2000/svg"><path d="M0 10 Q30 0, 60 10 T120 10 T180 10 T240 10 T300 10" fill="none" stroke="#d4af37" stroke-width="1.2"/><path d="M100 10 Q120 2, 150 10 Q180 2, 200 10" fill="none" stroke="#d4af37" stroke-width="1.8"/><circle cx="150" cy="10" r="2.5" fill="#d4af37"/><circle cx="130" cy="10" r="1.2" fill="#d4af37"/><circle cx="170" cy="10" r="1.2" fill="#d4af37"/></svg>`;
   
-  /* Large watermark emblem SVG for the background */
-  const watermarkSVG = `<svg class="cert-watermark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="90" fill="none" stroke="#d4af37" stroke-width="1.5"/><circle cx="100" cy="100" r="80" fill="none" stroke="#d4af37" stroke-width="0.8" stroke-dasharray="4,4"/><circle cx="100" cy="100" r="65" fill="none" stroke="#d4af37" stroke-width="0.5"/><text x="100" y="95" text-anchor="middle" font-family="Cinzel,serif" font-size="16" font-weight="700" fill="#d4af37">EGYPTIAN</text><text x="100" y="115" text-anchor="middle" font-family="Cinzel,serif" font-size="12" fill="#d4af37">ENGLISH ACADEMY</text><polygon points="100,30 106,48 125,48 110,58 116,76 100,66 84,76 90,58 75,48 94,48" fill="#d4af37" opacity="0.6"/></svg>`;
+  /* Large watermark logo image for the background */
+  const watermarkIMG = `<img src="icon/logo.png" class="cert-watermark" alt="Egyptian English Academy Watermark">`;
 
   if (!progress.fullName) {
     container.innerHTML = `
       <div class="certificate-section-wrapper cert-name-prompt-wrapper">
         <div class="cert-name-prompt-card">
-          <div class="results-icon">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <div class="cert-prompt-logo-container">
+            <img src="icon/logo.png" class="cert-prompt-logo" alt="Academy Logo">
           </div>
           <h2>Enter Certificate Name</h2>
           <p class="cert-name-prompt-desc">
@@ -208,7 +208,7 @@ function renderCertificateView(container) {
         <div class="certificate-decor-corner decor-bl">${cornerSVG}</div>
         <div class="certificate-decor-corner decor-br">${cornerSVG}</div>
         
-        ${watermarkSVG}
+        ${watermarkIMG}
         
         <div class="cert-content">
           

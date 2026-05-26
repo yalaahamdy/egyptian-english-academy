@@ -416,6 +416,32 @@ button {
   box-shadow: 0 8px 16px var(--primary-glow);
 }
 
+.brand-logo-img {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+  box-shadow: 0 8px 16px var(--primary-glow);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+}
+
+/* Custom Final Test Logo Styles */
+.cert-prompt-logo-container, .cert-intro-logo-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+.cert-prompt-logo, .cert-intro-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+}
+
 .brand-name {
   font-size: 1.35rem;
   font-weight: 800;

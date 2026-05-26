@@ -100,7 +100,7 @@
   opacity: 0.035;
   pointer-events: none;
   z-index: 1;
-  fill: #d4af37;
+  object-fit: contain;
 }
 
 /* Certificate Contents Container */
