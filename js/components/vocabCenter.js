@@ -584,7 +584,7 @@ function renderFinishedTab(lesson) {
       
       <div class="tutor-arabic-card empty-deck-tutor">
         <p class="ar-text vocab-finished-tutor-text">
-          وحش الحفظ! سمعت الـ 10 كلمات كاملة نطقاً وكتابة بنجاح ساحق. كدة كملت شروط الدرس وعملت إنجاز جديد! +100 XP
+          وحش الحفظ! سمعت الـ ${lesson.vocabulary.length} كلمة كاملة نطقاً وكتابة بنجاح ساحق. كدة كملت شروط الدرس وعملت إنجاز جديد! +100 XP
         </p>
       </div>
 
