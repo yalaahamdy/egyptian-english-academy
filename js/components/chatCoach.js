@@ -21,6 +21,164 @@ let isBotTyping = false;
 let isChatRecording = false;
 let chatRecognition = null;
 
+// Dynamic Session Context Memory
+let chatSessionState = {
+  userName: "",
+  location: "",
+  selectedFood: "",
+  selectedDrink: "",
+  selectedItem: "",
+  selectedSize: "",
+  symptom: "",
+  bodyPart: "",
+  meetingDay: "",
+  meetingTime: "",
+  job: "",
+  hobby: "",
+  weather: ""
+};
+
+function resetChatSessionState() {
+  chatSessionState = {
+    userName: "",
+    location: "",
+    selectedFood: "",
+    selectedDrink: "",
+    selectedItem: "",
+    selectedSize: "",
+    symptom: "",
+    bodyPart: "",
+    meetingDay: "",
+    meetingTime: "",
+    job: "",
+    hobby: "",
+    weather: ""
+  };
+}
+
+// Local Entity Extractor Engine
+function extractEntities(text) {
+  const clean = text.toLowerCase().trim();
+  
+  // 1. Extract Personal Names
+  const namePatterns = [
+    /my name is\s+([a-zA-Z]+)/i,
+    /i am\s+([a-zA-Z]+)/i,
+    /i'm\s+([a-zA-Z]+)/i,
+    /call me\s+([a-zA-Z]+)/i,
+    /this is\s+([a-zA-Z]+)/i
+  ];
+  
+  for (const pattern of namePatterns) {
+    const match = clean.match(pattern);
+    if (match && match[1]) {
+      const name = match[1].trim();
+      const exclusions = ["fine", "good", "happy", "sad", "sick", "student", "teacher", "doctor", "engineer", "here", "ready", "a", "the", "an"];
+      if (!exclusions.includes(name.toLowerCase())) {
+        chatSessionState.userName = name.charAt(0).toUpperCase() + name.slice(1);
+        break;
+      }
+    }
+  }
+
+  // 2. Extract Foods & Drinks
+  const foods = ["chicken", "fish", "beef", "meat", "pizza", "pasta", "salad", "soup", "rice", "burger"];
+  for (const food of foods) {
+    if (clean.includes(food)) {
+      chatSessionState.selectedFood = food;
+    }
+  }
+  
+  const drinks = ["juice", "water", "coffee", "tea", "milk", "soda"];
+  for (const drink of drinks) {
+    if (clean.includes(drink)) {
+      chatSessionState.selectedDrink = drink;
+    }
+  }
+
+  // 3. Extract Locations
+  if (clean.includes("live in")) {
+    const match = clean.match(/live in\s+([a-zA-Z\s]+)/i);
+    if (match && match[1]) {
+      chatSessionState.location = match[1].trim();
+    }
+  } else if (clean.includes("from")) {
+    const match = clean.match(/from\s+([a-zA-Z\s]+)/i);
+    if (match && match[1]) {
+      chatSessionState.location = match[1].trim();
+    }
+  }
+
+  // 4. Extract Clothes & Sizes
+  const clothes = ["shirt", "jacket", "trousers", "dress", "shoes", "skirt", "t-shirt", "coat"];
+  for (const item of clothes) {
+    if (clean.includes(item)) {
+      chatSessionState.selectedItem = item;
+    }
+  }
+  
+  const sizes = ["small", "medium", "large", "xl", "extra large"];
+  for (const size of sizes) {
+    if (clean.includes(size)) {
+      chatSessionState.selectedSize = size;
+    }
+  }
+
+  // 5. Extract Medical Symptoms & Body Parts
+  const symptoms = ["headache", "pain", "fever", "cough", "cold", "sore throat", "hurt"];
+  for (const symptom of symptoms) {
+    if (clean.includes(symptom)) {
+      chatSessionState.symptom = symptom;
+    }
+  }
+  
+  const bodyParts = ["head", "stomach", "leg", "arm", "throat", "back", "eye", "ear"];
+  for (const part of bodyParts) {
+    if (clean.includes(part)) {
+      chatSessionState.bodyPart = part;
+    }
+  }
+
+  // 6. Extract Days & Times
+  const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+  for (const day of days) {
+    if (clean.includes(day)) {
+      chatSessionState.meetingDay = day;
+    }
+  }
+  
+  const times = ["am", "pm", "o'clock"];
+  if (times.some(t => clean.includes(t))) {
+    const match = clean.match(/at\s+(\d+(?::\d+)?\s*(?:am|pm)?)/i) || clean.match(/(\d+\s*o'clock)/i) || clean.match(/at\s+(\d+)/i);
+    if (match && match[1]) {
+      chatSessionState.meetingTime = match[1].trim();
+    }
+  }
+
+  // 7. Extract Jobs & Studies
+  const jobs = ["student", "teacher", "engineer", "doctor", "nurse", "accountant", "manager", "programmer", "worker"];
+  for (const job of jobs) {
+    if (clean.includes(job)) {
+      chatSessionState.job = job;
+    }
+  }
+
+  // 8. Extract Weather & Hobbies
+  const weatherWords = ["sunny", "warm", "hot", "cold", "rainy", "cloudy", "nice", "beautiful"];
+  for (const w of weatherWords) {
+    if (clean.includes(w)) {
+      chatSessionState.weather = w;
+    }
+  }
+  
+  const hobbies = ["play", "watch", "swim", "read", "run", "football", "movie", "club", "music", "tennis"];
+  for (const h of hobbies) {
+    if (clean.includes(h)) {
+      chatSessionState.hobby = h;
+    }
+  }
+}
+
 // Local Intent Classifier
 function classifyUserIntent(text) {
   const clean = text.toLowerCase().trim();
@@ -103,27 +261,52 @@ const SCENARIOS = [
       let responseText = "";
       let tutorNote = "";
 
+      const name = chatSessionState.userName || "";
+      const loc = chatSessionState.location || "";
+      
+      const greets = [
+        `Nice to meet you ${name}! 😊 I live in Cairo, Egypt. It is a very busy and exciting city! Where do you live?`,
+        `Great meeting you ${name}! 🌟 Tell me, which city are you from? I would love to know!`,
+        `Wonderful! So, ${name}, what do you like to do in your free time?`
+      ];
+
+      const wellbeingResponses = [
+        "I am doing great, thank you so much for asking! 🌟 How is your day going?",
+        "Everything is wonderful on my side! 😊 How about you? What are you up to today?",
+        "I feel fantastic! 🚀 Thanks for being so polite!"
+      ];
+
+      const locationResponses = [
+        `Wow, ${loc} is a beautiful place! 🌍 Egypt has so many historic cities. Do you like living there?`,
+        `Aha! I know ${loc} very well, it is famous for its warm people. What is your favorite hobby?`,
+        `Amazing! Tell me ${name}, how is the weather in ${loc} today?`
+      ];
+
+      const randomSelection = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
       switch (intent) {
         case "GREETING":
         case "INTRODUCE_NAME":
-          responseText = "Nice to meet you! 😊 I live in Cairo, Egypt. It is a very busy and exciting city! Where do you live and what do you like to do?";
-          tutorNote = "رد رائع! البوت اتعرف عليك وبيقولك إنه ساكن في القاهرة، وبيسألك إنت ساكن فين وبتحب تعمل إيه؟";
+          responseText = name ? randomSelection(greets) : "Hello! 🌟 It is nice to meet you. Please, tell me what is your name?";
+          tutorNote = name ? `تفاعل رائع! البوت عرف اسمك وهو (${name}) وبيسألك عن مكان سكنك أو هوايتك.` : "كويس جداً! البوت مستني يعرف اسمك عشان يكمل التعارف بحرية.";
           break;
         case "ASK_WELLBEING":
-          responseText = "I am doing great, thank you for asking! 🌟 How is your day going so far?";
-          tutorNote = "سؤال مهذب! البوت بيطمنك إنه بخير وبيسألك يومك ماشي إزاي.";
+          responseText = randomSelection(wellbeingResponses);
+          tutorNote = "سؤال لطيف! البوت بيطمنك عن حاله وبيفتح معاك موضوع دردشة بسيط.";
           break;
         case "STATE_WELLBEING":
-          responseText = "That is wonderful to hear! 😊 We should talk more about our favorite things. What is your favorite hobby?";
-          tutorNote = "جميل! البوت فرحان إنك بخير وبيسألك عن هوايتك المفضلة.";
+          responseText = name ? `That is fantastic to hear, ${name}! 😊 Let's talk about our hobbies. What is your favorite hobby?` : "That is wonderful to hear! 😊 What is your favorite hobby or sport?";
+          tutorNote = "رد سليم! البوت مبسوط إنك بخير وبيسألك عن هوايتك المفضلة.";
           break;
         case "STATE_LOCATION":
-          responseText = "Wow, that is beautiful! 🌍 Egypt has so many historic places. Do you like visiting the Pyramids or museums?";
-          tutorNote = "الله ينور! جاوبت على مكان سكنك. البوت بيسألك لو بتحب تزور الأهرامات والمتاحف.";
+          responseText = randomSelection(locationResponses);
+          tutorNote = `ممتاز! البوت اتعرف على مكانك وهو (${loc}) وبيسألك عن الطقس أو هواياتك هناك.`;
           break;
         default:
-          responseText = "That sounds very interesting! 😊 I want to know more about you. Tell me, what is your name and where are you from?";
-          tutorNote = "ردك تمام! البوت حابب يكمل التعارف ويسألك عن اسمك ومكانك.";
+          responseText = name 
+            ? `That sounds very interesting, ${name}! 😊 Tell me more about what you like to do or where you live.`
+            : "That sounds very interesting! 😊 What is your name and where are you from?";
+          tutorNote = "ردك تمام! البوت حابب يكمل الدردشة بحرية ويسمع تفاصيل أكتر عنك.";
       }
 
       return { responseText, tutorNote };
@@ -147,15 +330,31 @@ const SCENARIOS = [
       let responseText = "";
       let tutorNote = "";
 
+      const name = chatSessionState.userName || "my friend";
+      
+      const familyResponses = [
+        `That is beautiful, ${name}! 👨‍👩‍👧‍👦 Family is everything. My father is a teacher and my mother is a nurse. Do you have any brothers or sisters?`,
+        `I love hearing about families! My sister lives in Alexandria. What do your family members do?`,
+        `Wonderful! Describe your mother or father to me, what is their job?`
+      ];
+
+      const sizeResponses = [
+        "Ah, I see! My family is small, I only have one brother. Who do you live with in your house?",
+        "Cool! Big families are always full of fun and warm moments. Who is your favorite sibling?",
+        "Nice! A small family means a quiet house. Do you have any pets as well?"
+      ];
+
+      const randomSelection = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
       if (intent === "TALK_FAMILY") {
-        responseText = "That's lovely! 👨‍👩‍👧‍👦 Family is very precious. My father is a teacher and my mother is a nurse. What do your parents do?";
-        tutorNote = "جميل جداً! البوت بيحكيلك عن مهنة والديه وبيسألك عن مهنة والدك أو والدتك.";
+        responseText = randomSelection(familyResponses);
+        tutorNote = "كلامك رائع عن العائلة! البوت اتعرف على الكيانات الأسرية وبيسألك عن الإخوة والأخوات.";
       } else if (cleanMsg.includes("big") || cleanMsg.includes("small")) {
-        responseText = "I see! My family is small, I only have one brother. Who do you live with in your house?";
-        tutorNote = "رد ممتاز! البوت بيحكيلك عن عائلته الصغيرة وبيسألك عايش مع مين في البيت.";
+        responseText = randomSelection(sizeResponses);
+        tutorNote = "إجابة صحيحة! وصفت حجم عيلتك والبوت بيشاركك تفاصيل عن عيلته وبيسألك عن إخواتك.";
       } else {
-        responseText = "That sounds nice! 🌟 Tell me, do you have any brothers or sisters? What do they do?";
-        tutorNote = "ردك سليم! كمل كلامك عن إخواتك ووالديك بحرية مع البوت.";
+        responseText = `That is cool, ${name}! 😊 Tell me, do you have any brothers or sisters? How many?`;
+        tutorNote = "كلامك سليم! كمل كلامك عن أفراد عيلتك ووصفهم للبوت بحرية.";
       }
 
       return { responseText, tutorNote };
@@ -179,12 +378,22 @@ const SCENARIOS = [
       let responseText = "";
       let tutorNote = "";
 
+      const name = chatSessionState.userName || "my friend";
+      
+      const homeResponses = [
+        `I love that description! Cozy spaces are the best. 🛋️ Where is the television or the sofa located in your living room?`,
+        `That sounds like a beautiful design, ${name}! Is your bedroom next to the kitchen or the living room?`,
+        `Excellent! What is your favorite piece of furniture in your bedroom?`
+      ];
+
+      const randomSelection = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
       if (intent === "DESCRIBE_HOME") {
-        responseText = "I love that description! Cozy spaces with nice furniture are the best. 🛋️ What color is your bedroom sofa or table?";
-        tutorNote = "وصفت منزلك وأثاثه للمهندس طارق بنجاح! هو بيسألك عن ألوان الأثاث.";
+        responseText = randomSelection(homeResponses);
+        tutorNote = "وصفت بيتك وغرفك بذكاء! طارق بيسألك دلوقتي عن أماكن قطع الأثاث باستخدام حروف الجر.";
       } else {
-        responseText = "Interesting design! 🏡 Every house has a unique story. Tell me about your kitchen or favorite room!";
-        tutorNote = "كلامك تمام! كمل وصف وتفاصيل لبيتك أو غرفتك المفضلة.";
+        responseText = `Interesting design, ${name}! 🏡 Tell me, do you have a big living room or a small kitchen? Describe it to me.`;
+        tutorNote = "كلامك تمام! كمل وصف وتفاصيل لبيتك أو غرفتك المفضلة باستخدام حروف الجر.";
       }
 
       return { responseText, tutorNote };
@@ -208,18 +417,33 @@ const SCENARIOS = [
       let responseText = "";
       let tutorNote = "";
 
+      const name = chatSessionState.userName || "sir";
+      const food = chatSessionState.selectedFood || "";
+      const drink = chatSessionState.selectedDrink || "";
+
       if (intent === "ORDER_FOOD") {
-        responseText = "Excellent choice! Our chicken and fish are very fresh today. 🐟 Would you like any orange juice or cold water to drink?";
-        tutorNote = "طلبت الوجبة بنجاح! نادل المطعم بيسألك لو تحب مشروب محدد مع الوجبة.";
+        if (drink) {
+          responseText = `Excellent choice! One ${food} and a refreshing ${drink} for you. 🥩 Would you like any dessert before the bill?`;
+          tutorNote = `جميل جداً! النادل فهم طلبك بالكامل وهو (${food}) مع (${drink}). بيقترح عليك حلوى قبل الحساب.`;
+        } else {
+          responseText = `Very nice choice, ${name}! Our ${food} is extremely fresh today. 🐟 What would you like to drink with your ${food}?`;
+          tutorNote = `طلبت الطبق الرئيسي وهو (${food}) بنجاح! النادل بيسألك دلوقتي عن المشروب المناسب معاه.`;
+        }
       } else if (intent === "ORDER_DRINK") {
-        responseText = "Perfect, a refreshing drink! 🥤 Coming right up. Would you like to check the bill when you are done?";
-        tutorNote = "طلبت المشروب بنجاح! النادل بيسألك لو جاهز للحساب.";
+        if (food) {
+          responseText = `Sure thing! One cold ${drink} to accompany your ${food}. 🥤 Shall I bring the bill now, or do you need anything else?`;
+          tutorNote = `طلبت المشروب وهو (${drink}) بجانب الوجبة (${food}). النادل بيستفسر لو جاهز للحساب.`;
+        } else {
+          responseText = `Coming right up! A refreshing ${drink} for you. 🥤 What main dish would you like to order with your drink?`;
+          tutorNote = `طلبت المشروب وهو (${drink}). النادل بيقترح عليك تطلب طبق رئيسي معاه.`;
+        }
       } else if (intent === "ASK_COST") {
-        responseText = "Here is your bill, sir. 🧾 It is 150 Egyptian pounds. Thank you for dining at Pyramids View!";
-        tutorNote = "نادل المطعم جابلك الحساب فورا وبيشكرك.";
+        const totalCost = food ? "180" : "60";
+        responseText = `Here is your bill, ${name}. 🧾 The total is ${totalCost} Egyptian pounds. You can pay by cash or credit card. Thank you!`;
+        tutorNote = "طلبت الحساب بشكل مهذب! النادل جابلك الفاتورة وبيوضحلك طريقة الدفع.";
       } else {
-        responseText = "Sure, I can help you with your dining experience. What else can I bring you today?";
-        tutorNote = "ردك سليم! اطلب أكل أو مشروب لتأكيد الطلب.";
+        responseText = `Certainly, ${name}! Let me help you. Would you like to try our special chicken, or just some water and juice?`;
+        tutorNote = "النادل مستني منك تحدد طلبك للأكل أو الشرب بوضوح.";
       }
 
       return { responseText, tutorNote };
@@ -243,18 +467,33 @@ const SCENARIOS = [
       let responseText = "";
       let tutorNote = "";
 
+      const name = chatSessionState.userName || "team member";
+      const day = chatSessionState.meetingDay || "";
+      const time = chatSessionState.meetingTime || "";
+
       if (intent === "STATE_DAY") {
-        responseText = "Great! That day works well for me. 📆 What time is best for you on that day? We can do 10 AM or 3 PM.";
-        tutorNote = "اخترت اليوم بنجاح! المدير بيقترح عليك ساعات للمقابلة في نفس اليوم.";
+        if (time) {
+          responseText = `Perfect! ${day} at ${time} works great for my calendar. 📆 Does that time suit you, or should we invite other managers?`;
+          tutorNote = `تم تحديد اليوم وهو (${day}) والوقت (${time}) بنجاح! المدير بيستفسر لو الموعد مريح ليك.`;
+        } else {
+          responseText = `Great, ${day} is fine! 📆 What time on ${day} are you free? I have openings at 10 AM and 3 PM.`;
+          tutorNote = `حددت اليوم وهو (${day}). المدير بيقترح عليك مواعيد محددة في نفس اليوم لتختار منها.`;
+        }
       } else if (intent === "STATE_TIME") {
-        responseText = "Okay, that time is perfect. ⏰ I will write it in my meeting calendar. Does that sound good to you?";
-        tutorNote = "حددت الساعة بدقة. المدير بيطلب منك تأكيد الموعد النهائي.";
+        if (day) {
+          responseText = `Okay! Let's lock in ${day} at ${time}. ⏰ Shall I send you the official email invite now?`;
+          tutorNote = `تم رصد الميعاد وهو (${day}) في تمام (${time}). المدير بيسألك لو يرسل بريد التأكيد.`;
+        } else {
+          responseText = `Understood, at ${time}! ⏰ But which day next week are we talking about? Monday, Wednesday, or Thursday?`;
+          tutorNote = `حددت الساعة وهي (${time}) ولكن ناقص تحدد اليوم. كمل حوارك وقول اسم اليوم.`;
+        }
       } else if (intent === "CONFIRM") {
-        responseText = "Confirmed! 🤝 Meeting is locked in. I will send you the calendar invite email. See you!";
-        tutorNote = "أكدت الموعد بنجاح تام.";
+        const scheduleString = (day && time) ? `for ${day} at ${time}` : "next week";
+        responseText = `Confirmed! 🤝 Our review meeting is locked in ${scheduleString}. I will send the email shortly. See you, ${name}!`;
+        tutorNote = "أكدت الموعد بنجاح تام! المدير سجل المقابلة وهيحضرها معاك.";
       } else {
-        responseText = "Let's find the best schedule. Tell me, which day next week is good for you?";
-        tutorNote = "المدير مستني تحدد معاه اليوم والساعة الأنسب ليك.";
+        responseText = `Let's find the best schedule, ${name}. What day next week are you free for the meeting?`;
+        tutorNote = "المدير مستني تحدد معاه اليوم والساعة الأنسب لظروف شغلك.";
       }
 
       return { responseText, tutorNote };
@@ -278,15 +517,19 @@ const SCENARIOS = [
       let responseText = "";
       let tutorNote = "";
 
+      const name = chatSessionState.userName || "my friend";
+      const job = chatSessionState.job || "";
+      const loc = chatSessionState.location || "";
+
       if (intent === "TALK_CAREER") {
-        responseText = "That is a very respectable occupation! 🚀 Where do you work or study every day? At an office or a university?";
-        tutorNote = "وضحت وظيفتك/دراستك. المدرب بيسألك دلوقتي عن مكان عملك أو دراستك.";
+        responseText = `That is a very interesting field! 🚀 Being a ${job} is highly respectable. Where do you usually work or study? At an office, university, or school?`;
+        tutorNote = `البوت عرف مهنتك وهي (${job})! كمل الكلام مع مدرب التوظيف وقوله مكان العمل أو الدراسة.`;
       } else if (cleanMsg.includes("university") || cleanMsg.includes("school") || cleanMsg.includes("office") || cleanMsg.includes("company")) {
-        responseText = "Very nice environment! 🏫 What are your daily tasks or subjects there?";
-        tutorNote = "حددت مكان العمل. المدرب حابب يعرف بتعمل إيه هناك كل يوم.";
+        responseText = `I see! Working or studying there must be very exciting. What are your daily duties or tasks in that place?`;
+        tutorNote = "وضحت مكان شغلك أو دراستك بنجاح! البوت بيسألك عن المهام اليومية اللي بتعملها.";
       } else {
-        responseText = "That is interesting! 🌟 Tell me more about what you study or do at work.";
-        tutorNote = "كلامك تمام! كمل حوارك المهني مع البوت بحرية.";
+        responseText = `That sounds good, ${name}! Tell me, what do you do every day at your study or work? Do you write codes, design houses, or help people?`;
+        tutorNote = "كلامك تمام! كمل حوارك المهني مع البوت ووضح المهام اليومية اللي بتقوم بيها.";
       }
 
       return { responseText, tutorNote };
@@ -310,18 +553,33 @@ const SCENARIOS = [
       let responseText = "";
       let tutorNote = "";
 
+      const name = chatSessionState.userName || "customer";
+      const item = chatSessionState.selectedItem || "";
+      const size = chatSessionState.selectedSize || "";
+
       if (intent === "SHOP_CLOTHES") {
-        responseText = "Great choice! We have high-quality fabrics. What size are you looking for? Small, medium, or large?";
-        tutorNote = "اخترت الملابس! البائع بيسألك عن المقاس المناسب ليك.";
+        if (size) {
+          responseText = `Excellent! We have the ${item} in ${size} size. 👕 Would you like to check the price or pay now?`;
+          tutorNote = `تم رصد خياراتك: (${item}) بمقاس (${size}). البائع بيقترح عليك معرفة السعر أو الدفع.`;
+        } else {
+          responseText = `Great choice! Our ${item} has high quality. What size do you need for this ${item}? Small, medium, or large?`;
+          tutorNote = `اخترت القطعة وهي (${item}). البائع بيستعلم عن مقاسك المناسب ليها.`;
+        }
       } else if (intent === "ASK_COST") {
-        responseText = "This item is 250 Egyptian pounds. 💳 You can pay by cash or credit card. What size do you need?";
-        tutorNote = "عرفت السعر وطريقة الدفع! حدد المقاس مع البائع.";
-      } else if (cleanMsg.includes("small") || cleanMsg.includes("medium") || cleanMsg.includes("large")) {
-        responseText = "Perfect, size is in stock! Would you like to check the price or pay now?";
-        tutorNote = "حددت مقاسك! البائع بيسألك لو عاوز تسأل عن السعر أو تدفع.";
+        const itemPrice = item ? "320" : "250";
+        responseText = `This beautiful ${item || 'item'} is ${itemPrice} Egyptian pounds. 💳 Do you want to pay by cash or credit card?`;
+        tutorNote = "سألت عن السعر بشكل رائع! البائع حدد التكلفة وبيستفسر عن وسيلة الدفع.";
+      } else if (cleanMsg.includes("small") || cleanMsg.includes("medium") || cleanMsg.includes("large") || cleanMsg.includes("xl")) {
+        if (item) {
+          responseText = `Perfect, size ${size} for the ${item} is in stock! Would you like to ask about the price?`;
+          tutorNote = `حددت المقاس وهو (${size}) للقطعة (${item}). اسأله عن السعر بالإنجليزية.`;
+        } else {
+          responseText = `Got it, size ${size}! But what item are you buying? A shirt, trousers, or a jacket?`;
+          tutorNote = `البائع عرف مقاسك وهو (${size}) بس ناقص تقوله عاوز تشتري قميص ولا بنطلون ولا جاكيت.`;
+        }
       } else {
-        responseText = "Let me help you find the perfect clothing item. What would you like to buy?";
-        tutorNote = "البائع مستني يعرف طلبك بالتحديد عشان يساعدك.";
+        responseText = `Welcome ${name}! We have amazing discounts today. Tell me, what item of clothing are you looking for?`;
+        tutorNote = "البائع بيرحب بيك ومستنيك تختار صنف الملابس اللي بتدور عليه.";
       }
 
       return { responseText, tutorNote };
@@ -345,15 +603,25 @@ const SCENARIOS = [
       let responseText = "";
       let tutorNote = "";
 
+      const name = chatSessionState.userName || "my friend";
+      
+      const touristResponses = [
+        `Thank you so much! 🚇 Is it opposite the museum or next to the bank? How should I get there? By metro or bus?`,
+        `Ah, I see! So I go straight and then turn. Is that near a restaurant or hotel?`,
+        `Very helpful directions! Can I go there by taxi or is it better to walk?`
+      ];
+
+      const randomSelection = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
       if (intent === "ASK_GIVE_DIRECTIONS") {
-        responseText = "Ah, thank you! Go straight or turn. 🚇 Is it near the museum? How should I go there? By bus or taxi?";
-        tutorNote = "أوصفت الاتجاه! السائح بيسألك عن المعالم المحيطة ووسيلة المواصلات المناسبة.";
-      } else if (cleanMsg.includes("metro") || cleanMsg.includes("bus") || cleanMsg.includes("taxi")) {
-        responseText = "Excellent, taking a metro or bus is very easy. Is it next to the big square?";
-        tutorNote = "اقترحت وسيلة مواصلات! السائح بيستفسر عن موقعها بالتحديد.";
+        responseText = randomSelection(touristResponses);
+        tutorNote = "أعطيت اتجاهات صحيحة! السائح بيستفسر عن المعالم المحيطة ووسيلة المواصلات الأنسب.";
+      } else if (cleanMsg.includes("metro") || cleanMsg.includes("bus") || cleanMsg.includes("taxi") || cleanMsg.includes("walk")) {
+        responseText = `Perfect, taking a transport is very fast! Is the station opposite the central square? Thanks for helping me, ${name}!`;
+        tutorNote = "اقترحت وسيلة مواصلات سريعة! السائح بيشكرك وبيأكد على المعلم المقابل ليها.";
       } else {
-        responseText = "Okay! Can you give me directions to the train station?";
-        tutorNote = "السائح مستني منك ترشده لأقرب محطة أو فندق.";
+        responseText = `Excuse me, ${name}! 🗺️ I am really confused. Can you tell me: should I turn left, right, or go straight to reach the hotel?`;
+        tutorNote = "السائح مشوش ومستني تديه كلمات اتجاهات صريحة (go straight / turn left / turn right).";
       }
 
       return { responseText, tutorNote };
@@ -377,15 +645,27 @@ const SCENARIOS = [
       let responseText = "";
       let tutorNote = "";
 
+      const name = chatSessionState.userName || "my patient";
+      const sym = chatSessionState.symptom || "";
+      const part = chatSessionState.bodyPart || "";
+
       if (intent === "TALK_HEALTH") {
-        responseText = "I am sorry to hear that. 🩺 Which part of your body hurts? Your head, throat, or stomach?";
-        tutorNote = "وصفت تعبك للطبيب! هو بيسألك دلوقتي عن العضو المؤلم لتشخيص الحالة.";
-      } else if (cleanMsg.includes("head") || cleanMsg.includes("stomach") || cleanMsg.includes("throat") || cleanMsg.includes("leg")) {
-        responseText = "I see. I will write a medicine prescription. 💊 Take it, rest, and drink warm water. Okay?";
-        tutorNote = "حددت العضو! الطبيب كتبلك الدواء وبيديك نصيحة بالراحة.";
+        if (part) {
+          responseText = `Oh, I am sorry to hear that you have a ${sym} in your ${part}. 🩺 Let me check. I will write a medicine prescription. Take it, rest, and drink water. Okay?`;
+          tutorNote = `شرحت العرض وهو (${sym}) في العضو (${part}) بدقة. الطبيب بيكتبلك العلاج وبيديك نصيحة للشفاء.`;
+        } else {
+          responseText = `I see. Having a ${sym} can be very annoying. 🩺 Which part of your body hurts? Your head, throat, or stomach?`;
+          tutorNote = `حددت العرض المرضي وهو (${sym}). الطبيب بيسألك عن العضو المتأثر بالتحديد.`;
+        }
+      } else if (cleanMsg.includes("head") || cleanMsg.includes("stomach") || cleanMsg.includes("throat") || cleanMsg.includes("leg") || cleanMsg.includes("arm")) {
+        responseText = `Understood. For your ${part || 'symptom'}, you need this medical pill. 💊 Take it after meals, rest well, and you will feel fine soon. Understand?`;
+        tutorNote = `حددت مكان الوجع وهو (${part}). الطبيب بيقترح عليك أخذ الدواء المناسب وبيطلب منك تأكيد فهم النصيحة.`;
+      } else if (intent === "CONFIRM" || cleanMsg.includes("thank")) {
+        responseText = `You are very welcome, ${name}! 💊 Take care of yourself, rest well, and goodbye!`;
+        tutorNote = "شكرت الطبيب وأكدت فهمك للنصيحة بنجاح كامل.";
       } else {
-        responseText = "I want to help you feel better. Describe your pain or sickness.";
-        tutorNote = "أوصف للطبيب حالتك بحرية: I feel sick and have a fever.";
+        responseText = `I want to help you feel better, ${name}. Describe your sickness or pain to me. What hurts?`;
+        tutorNote = "الطبيب مستنيك توصف التعب أو الألم اللي بتشعر بيه بالإنجليزي.";
       }
 
       return { responseText, tutorNote };
@@ -409,15 +689,24 @@ const SCENARIOS = [
       let responseText = "";
       let tutorNote = "";
 
+      const name = chatSessionState.userName || "buddy";
+      const weather = chatSessionState.weather || "";
+      const hobby = chatSessionState.hobby || "";
+
       if (intent === "TALK_WEATHER_HOBBIES") {
-        responseText = "I agree, sunny days are perfect! ⚽ What hobby do you want to do? Play football or watch a movie?";
-        tutorNote = "اتكلمت عن الطقس أو الهواية! أليكس بيقترح عليك أنشطة.";
-      } else if (intent === "CONFIRM") {
-        responseText = "Awesome, let's meet at 4 PM! 🤝 It is going to be so much fun!";
-        tutorNote = "اتفقتوا على الميعاد والتجمع سوا بنجاح.";
+        if (hobby) {
+          responseText = `That sounds awesome! ⚽ Doing ${hobby} is perfect on a ${weather || 'sunny'} day. Shall we go together at 4 PM?`;
+          tutorNote = `اتكلمت عن الهواية (${hobby}) والطقس (${weather}). أليكس صديقك بيقترح تتقابلوا الساعة 4 سوا.`;
+        } else {
+          responseText = `I agree! Since the weather is ${weather || 'nice'}, what do you want to do? Play football or watch a movie?`;
+          tutorNote = `علقت على الطقس وهو (${weather}). أليكس بيقترح عليك أنشطة تختار منها.`;
+        }
+      } else if (intent === "CONFIRM" || cleanMsg.includes("join") || cleanMsg.includes("with me")) {
+        responseText = `Awesome, let's meet at the club! 🤝 It is going to be so much fun. See you later, ${name}!`;
+        tutorNote = "اتفقتوا على الميعاد والتجمع سوا لقضاء العطلة بنجاح.";
       } else {
-        responseText = "It is a beautiful weekend. What are your favorite outdoor plans?";
-        tutorNote = "أليكس مستني يعرف إيه خطتك وهوايتك للخروج.";
+        responseText = `It is a beautiful weekend, ${name}. What are your favorite outdoor activities when it is sunny?`;
+        tutorNote = "أليكس مستني يعرف إيه خطتك وهوايتك للخروج والترفيه.";
       }
 
       return { responseText, tutorNote };
@@ -435,6 +724,8 @@ export function initChatCoach() {
   activeGoals = [];
   isBotTyping = false;
   isChatRecording = false;
+
+  resetChatSessionState();
 
   if (chatRecognition) {
     try { chatRecognition.stop(); } catch(e){}
@@ -538,6 +829,9 @@ function startChatSession(scenarioId) {
     { sender: 'bot', text: sc.botWelcome, tutorNote: sc.goals[0].text }
   ];
   
+  // Reset session memory
+  resetChatSessionState();
+
   // Clone goals
   activeGoals = sc.goals.map(g => ({ ...g, completed: false }));
 
@@ -551,7 +845,6 @@ function renderChatWindow() {
   const container = document.getElementById("chat-coach-section");
   if (!container) return;
 
-  const progress = getProgress();
   const goalsMetCount = activeGoals.filter(g => g.completed).length;
 
   container.innerHTML = `
@@ -685,6 +978,10 @@ function sendUserMessage() {
 
   // Evaluate goals against user message (order-independent)
   const cleanMsg = msgText.toLowerCase();
+  
+  // Extract entities first to update the session state memory
+  extractEntities(msgText);
+  
   activeGoals.forEach(g => {
     if (!g.completed) {
       const match = g.keywords.some(k => cleanMsg.includes(k));
@@ -701,8 +998,8 @@ function sendUserMessage() {
   renderChatWindow();
 
   setTimeout(() => {
-    // Generate Bot response from Intent-based engine
-    const { responseText, tutorNote } = activeScenario.generateResponse(cleanMsg, activeGoals);
+    // Generate Bot response from Dynamic Intent-based engine
+    const { responseText, tutorNote } = activeScenario.generateResponse(cleanMsg);
     
     isBotTyping = false;
 
@@ -711,7 +1008,7 @@ function sendUserMessage() {
 
     renderChatWindow();
     speakText(responseText);
-  }, 1500);
+  }, 1200);
 }
 
 function showCoachingFinishedView() {
@@ -722,7 +1019,7 @@ function showCoachingFinishedView() {
   
   chatState = 'finished';
   sfx.playCelebration();
-  addXP(100); // Mastery completion bonus!
+  addXP(100); // Mastery completion bonus
 
   const container = document.getElementById("chat-coach-section");
   if (!container) return;
