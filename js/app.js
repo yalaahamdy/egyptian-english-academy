@@ -11,6 +11,7 @@ import { initVocabCenter } from './components/vocabCenter.js';
 import { initFinalTest } from './components/finalTest.js';
 import { renderDictionary } from './components/dictionary.js';
 import { initReviewCenter } from './components/reviewCenter.js';
+import { initChatCoach } from './components/chatCoach.js';
 
 // Router Map matching hashes to section DOM IDs
 const ROUTES = {
@@ -20,7 +21,8 @@ const ROUTES = {
   'vocab-center': 'vocab-center-section',
   'dictionary': 'dictionary-section',
   'final-test': 'final-test-section',
-  'review-center': 'review-center-section'
+  'review-center': 'review-center-section',
+  'chat-coach': 'chat-coach-section'
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -254,6 +256,9 @@ function handleRouting() {
       break;
     case 'review-center':
       initReviewCenter();
+      break;
+    case 'chat-coach':
+      initChatCoach();
       break;
   }
 

@@ -209,9 +209,9 @@ export function renderRoadmap() {
           </div>
           <div class="journey-card-body">
             <h3 class="gold-text">A1 Academy Graduation Exam</h3>
-            <p>Demonstrate your mastery over all 40 lessons. Pass this 20-question cumulative exam with 80% to earn your official academy graduation certificate!</p>
+            <p>Demonstrate your mastery over all 40 lessons. Pass this 50-question cumulative exam with 80% to earn your official academy graduation certificate!</p>
             ${progress.finalTestScore !== null ? `
-              <div class="final-score-display">Best Score: <strong>${progress.finalTestScore} / 20</strong></div>
+              <div class="final-score-display">Best Score: <strong>${progress.finalTestScore} / 50</strong></div>
             ` : ''}
           </div>
           <div class="journey-card-footer">

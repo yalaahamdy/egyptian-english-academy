@@ -169,7 +169,7 @@ function renderListeningExercise() {
 
       <div class="section-nav-footer practice-nav-footer">
         <button class="btn btn-secondary" onclick="window.prevListening()" ${listeningIndex === 0 ? 'disabled' : ''}>Previous</button>
-        <button class="btn btn-primary btn-next-svg-adjust" id="btn-next-listening" onclick="window.nextListening()" disabled>
+        <button class="btn btn-primary btn-next-svg-adjust" id="btn-next-listening" onclick="window.nextListening()">
           <span>Next</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </button>
@@ -535,7 +535,7 @@ function renderReadingExercise() {
 
     <div class="section-nav-footer practice-nav-footer">
       <button class="btn btn-secondary" onclick="window.prevReading()" ${readingIndex === 0 ? 'disabled' : ''}>Previous</button>
-      <button class="btn btn-primary btn-next-svg-adjust" id="btn-next-reading" onclick="window.nextReading()" disabled>
+      <button class="btn btn-primary btn-next-svg-adjust" id="btn-next-reading" onclick="window.nextReading()">
         <span>Next</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
       </button>
@@ -821,7 +821,7 @@ function renderScrambleWriting(ex, panel, total) {
 
       <div class="section-nav-footer practice-nav-footer">
         <button class="btn btn-secondary" onclick="window.prevWriting()" ${writingIndex === 0 ? 'disabled' : ''}>Previous</button>
-        <button class="btn btn-primary btn-next-svg-adjust" id="btn-next-writing" onclick="window.nextWriting()" disabled>
+        <button class="btn btn-primary btn-next-svg-adjust" id="btn-next-writing" onclick="window.nextWriting()">
           <span>Next</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </button>
@@ -927,7 +927,7 @@ function renderFillBlanksWriting(ex, panel, total) {
 
       <div class="section-nav-footer practice-nav-footer">
         <button class="btn btn-secondary" onclick="window.prevWriting()" ${writingIndex === 0 ? 'disabled' : ''}>Previous</button>
-        <button class="btn btn-primary btn-next-svg-adjust" id="btn-next-writing" onclick="window.nextWriting()" disabled>
+        <button class="btn btn-primary btn-next-svg-adjust" id="btn-next-writing" onclick="window.nextWriting()">
           <span>Next</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </button>

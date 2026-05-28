@@ -119,7 +119,7 @@ export function getLessonExercises(lesson, skill) {
   
   else if (skill === 'reading') {
     // Reading contains a text passage and multiple questions
-    const passage = (lesson.practice && lesson.practice.reading && lesson.practice.reading.text) || "";
+    const passage = (lesson.practice && lesson.practice.reading && lesson.practice.reading.passage) || (lesson.practice && lesson.practice.reading && lesson.practice.reading.text) || "";
     let questions = [];
     
     if (lesson.practice && lesson.practice.reading && lesson.practice.reading.questions) {
