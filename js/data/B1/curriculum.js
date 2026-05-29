@@ -22,6 +22,7 @@ import { unit21 } from './units/unit21.js';
 import { unit22 } from './units/unit22.js';
 import { unit23 } from './units/unit23.js';
 import { unit24 } from './units/unit24.js';
+import { unit25 } from './units/unit25.js';
 
 // List of active units for Level B1 Phase 6
 export const units = [
@@ -48,7 +49,8 @@ export const units = [
   unit21,
   unit22,
   unit23,
-  unit24
+  unit24,
+  unit25
 ];
 
 // Flat array of all lessons (sequential IDs 1 to 48)
