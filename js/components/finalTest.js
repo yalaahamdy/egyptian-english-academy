@@ -6,17 +6,25 @@
  */
 
 import { getProgress, saveFinalTestScore } from '../storage.js';
-import { curriculum } from '../data/curriculum.js';
+import { levelData } from '../levelManager.js';
 import { sfx } from '../audioEffects.js';
 import { generateCumulativeExamQuestions } from '../data/questionGenerator.js';
 import { startSession } from './sessionRunner.js';
 
 let examScore = 0;
 let examQuestions = [];
+let examPassingScore = 40;
+let examTotalQuestions = 50;
+
+function updateExamConfig() {
+  const tempQuestions = generateCumulativeExamQuestions(levelData.curriculum);
+  examTotalQuestions = tempQuestions.length;
+  examPassingScore = Math.ceil(examTotalQuestions * 0.8);
+}
 
 export function initFinalTest() {
   const progress = getProgress();
-  const allCompleted = progress.completedLessons.length === curriculum.length;
+  const allCompleted = progress.completedLessons.length === levelData.curriculum.length;
   
   const container = document.getElementById("final-test-section");
   if (!container) return;
@@ -26,7 +34,9 @@ export function initFinalTest() {
     return;
   }
 
-  if (progress.finalTestScore !== null && progress.finalTestScore >= 40) {
+  updateExamConfig();
+
+  if (progress.finalTestScore !== null && progress.finalTestScore >= examPassingScore) {
     renderCertificateView(container);
   } else {
     renderIntroScreen(container);
@@ -34,6 +44,7 @@ export function initFinalTest() {
 }
 
 function renderLockedScreen(container, progress) {
+  const totalLessons = levelData.curriculum.length;
   container.innerHTML = `
     <div class="quiz-container cert-locked-state">
       <div class="results-icon">
@@ -41,12 +52,12 @@ function renderLockedScreen(container, progress) {
       </div>
       <h2>Mastery Exam Locked</h2>
       <p class="cert-locked-desc">
-        You must complete all 40 roadmap lessons and pass their quizzes to unlock the cumulative final exam.
+        You must complete all ${totalLessons} roadmap lessons and pass their quizzes to unlock the cumulative final exam.
       </p>
       
       <div class="tutor-arabic-card cert-locked-tutor">
         <p class="ar-text">
-          يا بطل، لازم تخلص الـ 40 درساً كاملة وتعدي اختباراتهم بنجاح عشان تفتح الامتحان الشامل وتنافس على الشهادة الفخمة! إنت مخلص حالياً ${progress.completedLessons.length} دروس فقط.
+          يا بطل، لازم تخلص الـ ${totalLessons} درساً كاملة وتعدي اختباراتهم بنجاح عشان تفتح الامتحان الشامل وتنافس على الشهادة الفخمة! إنت مخلص حالياً ${progress.completedLessons.length} دروس فقط.
         </p>
       </div>
       
@@ -56,20 +67,21 @@ function renderLockedScreen(container, progress) {
 }
 
 function renderIntroScreen(container) {
+  updateExamConfig();
   container.innerHTML = `
     <div class="quiz-container cert-intro-state">
       <div class="cert-intro-logo-container">
         <img src="icon/logo.png" class="cert-intro-logo" alt="Academy Logo">
       </div>
-      <h1>A1 Level Mastery Exam</h1>
+      <h1>${levelData.currentLevel} Level Mastery Exam</h1>
       <p class="cert-intro-desc">
-        This cumulative test has 50 questions covering grammar, vocabulary, listening, reading, writing, and speaking from all 40 lessons.
-        Score 80%+ (40/50) to graduate and claim your certificate!
+        This cumulative test has ${examTotalQuestions} questions covering grammar, vocabulary, listening, reading, writing, and speaking from all ${levelData.curriculum.length} lessons.
+        Score 80%+ (${examPassingScore}/${examTotalQuestions}) to graduate and claim your certificate!
       </p>
       
       <div class="tutor-arabic-card cert-intro-tutor">
         <p class="ar-text">
-          جاهز يا وحش الإنجليزي للمحطة الأخيرة؟ الامتحان ده بيقيس مستواك في كل اللي فات وبيتكون من 50 سؤال. هتحتاج تجيب 40 من 50 عشان تاخد شهادة التخرج بتوقيع المدرس!
+          جاهز يا وحش الإنجليزي للمحطة الأخيرة؟ الامتحان ده بيقيس مستواك في كل اللي فات وبيتكون من ${examTotalQuestions} سؤال. هتحتاج تجيب ${examPassingScore} من ${examTotalQuestions} عشان تاخد شهادة التخرج بتوقيع المدرس!
         </p>
       </div>
       
@@ -87,9 +99,11 @@ function renderIntroScreen(container) {
 function startExamSession() {
   const progress = getProgress();
   const completedIds = progress.completedLessons || [];
-  const completedLessons = curriculum.filter(l => completedIds.includes(l.id));
+  const completedLessons = levelData.curriculum.filter(l => completedIds.includes(l.id));
 
   examQuestions = generateCumulativeExamQuestions(completedLessons);
+  examTotalQuestions = examQuestions.length;
+  examPassingScore = Math.ceil(examTotalQuestions * 0.8);
   
   startSession(examQuestions, {
     mode: 'final',
@@ -108,20 +122,21 @@ function showExamResults(score, total) {
   const container = document.getElementById("final-test-section");
   if (!container) return;
 
-  const passed = score >= 40;
-  saveFinalTestScore(score);
+  updateExamConfig();
+  const passed = score >= examPassingScore;
+  saveFinalTestScore(score, null, passed);
 
   let icon = passed 
     ? `<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"></path><path d="M12 2a6 6 0 0 1 6 6v5a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8a6 6 0 0 1 6-6z"></path></svg>`
     : `<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>`;
   
   let commentEn = passed 
-    ? "Excellent job, Graduate! You passed the cumulative exam and demonstrated proficiency at the A1 Level. Enter your name below to print your certificate!"
-    : "You did not achieve the required 80% passing score (40/50). Do not worry! Review your lessons and try again.";
+    ? `Excellent job, Graduate! You passed the cumulative exam and demonstrated proficiency at the ${levelData.currentLevel} Level. Enter your name below to print your certificate!`
+    : `You did not achieve the required 80% passing score (${examPassingScore}/${total}). Do not worry! Review your lessons and try again.`;
     
   let commentAr = passed
-    ? "يا واد يا عبقري! إنت أثبت جدارتك وقفلت الامتحان الشامل بنجاح. مبروك عليك إتمام المستوى A1 بنجاح تام! اكتب اسمك تحت عشان نطبعلك شهادة معتمدة فخمة!"
-    : "محاولة كويسة يا بطل، بس النتيجة لسة أقل من المطلوب. راجع الدروس اللي غلطت فيها وعيد الاختبار تاني، هتحتاج تجيب 40 من 50 عشان تاخد الشهادة المرة الجاية!";
+    ? `يا واد يا عبقري! إنت أثبت جدارتك وقفلت الامتحان الشامل بنجاح. مبروك عليك إتمام المستوى ${levelData.currentLevel} بنجاح تام! اكتب اسمك تحت عشان نطبعلك شهادة معتمدة فخمة!`
+    : `محاولة كويسة يا بطل، بس النتيجة لسة أقل من المطلوب. راجع الدروس اللي غلطت فيها وعيد الاختبار تاني، هتحتاج تجيب ${examPassingScore} من ${total} عشان تاخد الشهادة المرة الجاية!`;
 
   if (passed) {
     sfx.playCelebration();
@@ -225,7 +240,7 @@ function renderCertificateView(container) {
           <path d="M 100,83 L 122,89 L 122,103" fill="none" stroke="url(#goldGrad1)" stroke-width="1.2" stroke-linecap="round" />
           <polygon points="120,103 122,108 124,103" fill="url(#goldGrad1)" />
         </g>
-        <text x="100" y="132" text-anchor="middle" font-family="'Cinzel', serif" font-size="22" font-weight="900" fill="url(#goldGrad1)" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.6))">A1</text>
+        <text x="100" y="132" text-anchor="middle" font-family="'Cinzel', serif" font-size="22" font-weight="900" fill="url(#goldGrad1)" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.6))">${levelData.currentLevel || 'A1'}</text>
         <text x="100" y="146" text-anchor="middle" font-family="'Montserrat', sans-serif" font-size="8" font-weight="800" letter-spacing="2" fill="url(#goldGrad2)">MASTERY</text>
       </svg>
     </div>
@@ -280,7 +295,7 @@ function renderCertificateView(container) {
           </div>
           
           <h1 class="cert-main-title">Certificate of Completion</h1>
-          <p class="cert-subtitle">A1 ELEMENTARY ENGLISH MASTERY</p>
+          <p class="cert-subtitle">${levelData.currentLevel || 'A1'} ELEMENTARY ENGLISH MASTERY</p>
           
           <span class="cert-presented-to">This certificate is proudly presented to</span>
           
@@ -289,10 +304,10 @@ function renderCertificateView(container) {
           ${flourishSVG}
           
           <p class="cert-achievement-text">
-            For successfully completing all 40 lessons, interactive practice sections, 
+            For successfully completing all ${levelData.curriculum.length} lessons, interactive practice sections, 
             lesson assessments, and the cumulative mastery examination, thereby demonstrating 
             proficiency in English grammar, vocabulary, listening, reading, writing, 
-            and speaking at the A1 Elementary Level.
+            and speaking at the ${levelData.currentLevel || 'A1'} Elementary Level.
           </p>
           
           <div class="cert-footer-row">

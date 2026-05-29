@@ -5,21 +5,15 @@
  * Renders explanations, vocabulary boxes, and conversational dialogues.
  */
 
-import { curriculum } from '../data/curriculum.js';
+import { levelData } from '../levelManager.js';
 import { getProgress } from '../storage.js';
-import { flashcards } from '../data/flashcards.js';
-import { dialogues } from '../data/dialogues.js';
 import { initPractice } from './practiceEngine.js';
 import { initQuiz } from './quizEngine.js';
 
 export function speakText(text) {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
-    
-    // Filter out Emojis to prevent the synthesized voice from reading them aloud
-    const cleanText = text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F170}-\u{1F251}\u{1F004}\u{1F0CF}\u{1F18E}\u{1F191}-\u{1F19A}\u{1F201}-\u{1F251}\u{203C}\u{2049}\u{205F}\u{2122}\u{2139}\u{2194}-\u{2199}\u{21A9}-\u{21AA}\u{231A}-\u{231B}\u{2328}\u{23CF}\u{23E9}-\u{23F3}\u{23F8}-\u{23FA}\u{24C2}\u{25AA}-\u{25AB}\u{25B6}\u{25C0}\u{25FB}-\u{25FE}\u{2600}-\u{2604}\u{260E}\u{2611}\u{2614}-\u{2615}\u{2618}\u{261D}\u{2620}\u{2622}-\u{2623}\u{2626}\u{262A}\u{262E}-\u{262F}\u{2638}-\u{263A}\u{2640}\u{2642}\u{2648}-\u{2653}\u{265F}\u{2660}\u{2663}\u{2665}-\u{2666}\u{2668}\u{267B}\u{267F}\u{2692}-\u{2697}\u{2699}\u{269B}-\u{269C}\u{26A0}-\u{26A1}\u{26AA}-\u{26AB}\u{26B0}-\u{26B1}\u{26BD}-\u{26BE}\u{26C4}-\u{26C5}\u{26C8}\u{26CF}-\u{26D1}\u{26D3}-\u{26D4}\u{26E9}-\u{26EA}\u{26F0}-\u{26F5}\u{26F7}-\u{26FA}\u{26FD}\u{2702}\u{2705}\u{2708}-\u{270D}\u{270F}\u{2712}\u{2714}\u{2716}\u{271D}\u{2721}\u{2728}\u{2733}-\u{2734}\u{2744}\u{2747}\u{274C}\u{274E}\u{2753}-\u{2755}\u{2757}\u{2763}-\u{2764}\u{2795}-\u{2797}\u{27A1}\u{27B0}\u{27BF}\u{2934}-\u{2935}\u{2B05}-\u{2B07}\u{2B1B}-\u{2B1C}\u{2B50}\u{2B55}\u{3030}\u{303D}\u{3297}\u{3299}]/gu, '').replace(/\s+/g, ' ').trim();
-    
-    const utterance = new SpeechSynthesisUtterance(cleanText);
+    const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
     
     // Read user-defined speech rate from localStorage
@@ -43,7 +37,7 @@ export function renderLesson(lessonId, tab = 'learn') {
   const container = document.getElementById("lesson-viewer-section");
   if (!container) return;
 
-  const lesson = curriculum.find(l => l.id === parseInt(lessonId));
+  const lesson = levelData.curriculum.find(l => l.id === parseInt(lessonId));
   if (!lesson) {
     window.location.hash = '#roadmap';
     return;
@@ -98,9 +92,9 @@ export function renderLesson(lessonId, tab = 'learn') {
 
 function renderLearnTab(lesson, panel) {
   // Fetch Vocabulary cards for this lesson
-  const lessonVocab = flashcards.filter(card => card.lessonId === lesson.id);
+  const lessonVocab = levelData.flashcards.filter(card => card.lessonId === lesson.id);
   // Fetch Dialogues for this lesson
-  const lessonDialogue = dialogues.find(d => d.lessonId === lesson.id);
+  const lessonDialogue = levelData.dialogues.find(d => d.lessonId === lesson.id);
 
   panel.innerHTML = `
     <div class="learn-container">

@@ -1033,3 +1033,175 @@ button {
 .w-99 { width: 99% !important; }
 .w-100 { width: 100% !important; }
 
+/* ==========================================================================
+   Academy Settings Modal & Trigger Button Styling
+   ========================================================================== */
+
+/* Settings Trigger Button in Sidebar */
+.settings-trigger-btn {
+  background: var(--bg-tertiary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  font-family: var(--font-en);
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.settings-trigger-btn:hover {
+  background: var(--primary) !important;
+  border-color: var(--primary-hover) !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.settings-trigger-btn:active {
+  transform: translateY(0);
+}
+
+/* Modal Animations */
+@keyframes settingsFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes settingsSlideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-overlay {
+  animation: settingsFadeIn 0.25s ease-out;
+}
+
+.settings-modal-content {
+  animation: settingsSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow-3d);
+  overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header-adjust {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.close-modal-btn {
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-tertiary) !important;
+  color: var(--text-muted) !important;
+}
+
+.close-modal-btn:hover {
+  background: var(--error) !important;
+  color: white !important;
+  transform: rotate(90deg);
+}
+
+/* Settings Options Styling */
+.settings-option-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  transition: all 0.2s ease;
+}
+
+.settings-option-card:hover {
+  border-color: var(--primary-hover);
+  box-shadow: inset 0 0 0 1px var(--primary-glow);
+}
+
+.settings-label {
+  font-family: var(--font-en);
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.settings-sublabel {
+  font-family: var(--font-ar);
+  color: var(--text-muted);
+}
+
+/* Dropdown styling */
+.settings-select-full {
+  cursor: pointer;
+  outline: none;
+  font-family: var(--font-en);
+  transition: all 0.2s ease;
+}
+
+.settings-select-full:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* Range input customization */
+.settings-slider-full {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-primary);
+  outline: none;
+  margin: 10px 0;
+}
+
+.settings-slider-full::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.settings-slider-full::-webkit-slider-thumb:hover {
+  background: var(--primary-hover);
+  transform: scale(1.15);
+}
+
+/* Backup and Danger Buttons styling */
+.settings-backup-btn {
+  font-family: var(--font-en);
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.settings-backup-btn:hover {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border-color: var(--primary-hover) !important;
+}
+
+.settings-btn-reset-adjust {
+  transition: all 0.2s ease;
+}
+
+.settings-btn-reset-adjust:hover {
+  background: var(--error) !important;
+  color: white !important;
+  border-color: var(--error) !important;
+  box-shadow: 0 4px 12px var(--error-glow);
+}

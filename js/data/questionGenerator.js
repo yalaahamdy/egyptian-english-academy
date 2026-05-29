@@ -5,7 +5,7 @@
  * and generates 15-question interactive quizzes.
  */
 
-import { curriculum } from './curriculum.js';
+import { levelData } from '../levelManager.js';
 
 // Helper to shuffle array
 function shuffle(array) {
@@ -24,7 +24,7 @@ function getVocabDistractors(correctWord, lesson, count = 2) {
   
   if (pool.length < count) {
     // Pull from entire curriculum if lesson vocab is not enough
-    curriculum.forEach(l => {
+    levelData.curriculum.forEach(l => {
       l.vocabulary.forEach(v => {
         if (v.word.toLowerCase() !== correctWord.toLowerCase() && !pool.includes(v.word)) {
           pool.push(v.word);
@@ -42,7 +42,7 @@ function getTranslationDistractors(correctTrans, lesson, count = 2) {
   let pool = lessonTrans.filter(t => t !== correctTrans);
   
   if (pool.length < count) {
-    curriculum.forEach(l => {
+    levelData.curriculum.forEach(l => {
       l.vocabulary.forEach(v => {
         if (v.translation !== correctTrans && !pool.includes(v.translation)) {
           pool.push(v.translation);

@@ -5,7 +5,7 @@
  */
 
 import { getProgress, addXP } from '../storage.js';
-import { curriculum } from '../data/curriculum.js';
+import { levelData } from '../levelManager.js';
 import { sfx } from '../audioEffects.js';
 import { getLessonExercises } from '../data/questionGenerator.js';
 import { startSession } from './sessionRunner.js';
@@ -65,7 +65,7 @@ function gatherAvailablePool(completedIds) {
   const writingPool = [];
 
   completedIds.forEach(lessonId => {
-    const lesson = curriculum.find(l => l.id === lessonId);
+    const lesson = levelData.curriculum.find(l => l.id === lessonId);
     if (!lesson) return;
 
     // Vocabulary

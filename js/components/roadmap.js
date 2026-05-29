@@ -6,7 +6,8 @@
  */
 
 import { getProgress } from '../storage.js';
-import { curriculum, units } from '../data/curriculum.js';
+import { levelData } from '../levelManager.js';
+import { generateCumulativeExamQuestions } from '../data/questionGenerator.js';
 
 let selectedUnitId = null;
 
@@ -17,8 +18,9 @@ export function renderRoadmap() {
   const progress = getProgress();
 
   // Find the user's active unit to select it by default
-  const nextLesson = curriculum.find(lesson => !progress.completedLessons.includes(lesson.id)) || curriculum[curriculum.length - 1];
-  const activeUnitId = nextLesson ? nextLesson.unitId : 10;
+  const nextLesson = levelData.curriculum.find(lesson => !progress.completedLessons.includes(lesson.id)) || levelData.curriculum[levelData.curriculum.length - 1];
+  const lastUnitId = levelData.units.length > 0 ? levelData.units[levelData.units.length - 1].id : 10;
+  const activeUnitId = nextLesson ? nextLesson.unitId : lastUnitId;
   
   if (selectedUnitId === null) {
     selectedUnitId = activeUnitId;
@@ -30,17 +32,17 @@ export function renderRoadmap() {
     renderRoadmap();
   };
 
-  const selectedUnit = units.find(u => u.id === selectedUnitId) || units[0];
+  const selectedUnit = levelData.units.find(u => u.id === selectedUnitId) || levelData.units[0];
 
   // 1. Header Section
   let html = `
     <div class="roadmap-header">
-      <h1 class="roadmap-main-title">A1 Learning Journey</h1>
+      <h1 class="roadmap-main-title">${levelData.currentLevel} Learning Journey</h1>
       <p class="roadmap-main-subtitle">Choose a unit and follow the step-by-step lesson track to master English!</p>
       
       <div class="tutor-arabic-card roadmap-tutor-banner">
         <p class="ar-text">
-          رحلتك التعليمية للمستوى A1 مقسمة لـ 10 وحدات تفاعلية. اختر الوحدة النشطة وابدأ الدروس بالترتيب، كل درس يتطلب تسميع الكلمات واجتياز الكويز بنسبة 90% لفتح التالي!
+          رحلتك التعليمية للمستوى ${levelData.currentLevel} مقسمة لـ ${levelData.units.length} وحدات تفاعلية. اختر الوحدة النشطة وابدأ الدروس بالترتيب، كل درس يتطلب تسميع الكلمات واجتياز الكويز بنسبة 90% لفتح التالي!
         </p>
       </div>
     </div>
@@ -51,7 +53,7 @@ export function renderRoadmap() {
     <div class="roadmap-unit-grid">
   `;
 
-  units.forEach(unit => {
+  levelData.units.forEach(unit => {
     const completedCount = unit.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
     const progressPercent = Math.round((completedCount / unit.lessons.length) * 100);
     const isUnitCompleted = completedCount === unit.lessons.length;
@@ -175,10 +177,17 @@ export function renderRoadmap() {
     `;
   });
 
-  // Final Mastery Test Golden Trophy Card at the end of Unit 10 Journey
-  if (selectedUnitId === 10) {
-    const allLessonsCompleted = progress.completedLessons.length === curriculum.length;
-    const hasPassedFinalTest = progress.finalTestScore !== null && progress.finalTestScore >= 16;
+  // Final Mastery Test Golden Trophy Card at the end of the last Unit
+  const lastUnit = levelData.units[levelData.units.length - 1];
+  if (lastUnit && selectedUnitId === lastUnit.id) {
+    const allLessonsCompleted = progress.completedLessons.length === levelData.curriculum.length;
+    
+    // Estimate final exam parameters dynamically
+    const tempExamQuestions = generateCumulativeExamQuestions(levelData.curriculum);
+    const totalExamQuestionsCount = tempExamQuestions.length;
+    const passingExamScore = Math.ceil(totalExamQuestionsCount * 0.8);
+    
+    const hasPassedFinalTest = progress.finalTestScore !== null && progress.finalTestScore >= passingExamScore;
     
     let finalStatusClass = "locked";
     let finalBadgeText = "Locked";
@@ -208,10 +217,10 @@ export function renderRoadmap() {
             <span class="badge ${finalBadgeClass}">${finalBadgeText}</span>
           </div>
           <div class="journey-card-body">
-            <h3 class="gold-text">A1 Academy Graduation Exam</h3>
-            <p>Demonstrate your mastery over all 40 lessons. Pass this 50-question cumulative exam with 80% to earn your official academy graduation certificate!</p>
+            <h3 class="gold-text">${levelData.currentLevel} Academy Graduation Exam</h3>
+            <p>Demonstrate your mastery over all ${levelData.curriculum.length} lessons. Pass this ${totalExamQuestionsCount}-question cumulative exam with 80% (${passingExamScore}/${totalExamQuestionsCount}) to earn your official academy graduation certificate!</p>
             ${progress.finalTestScore !== null ? `
-              <div class="final-score-display">Best Score: <strong>${progress.finalTestScore} / 50</strong></div>
+              <div class="final-score-display">Best Score: <strong>${progress.finalTestScore} / ${totalExamQuestionsCount}</strong></div>
             ` : ''}
           </div>
           <div class="journey-card-footer">

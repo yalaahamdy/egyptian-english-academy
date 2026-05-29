@@ -6,7 +6,7 @@
  */
 
 import { getProgress } from '../storage.js';
-import { curriculum } from '../data/curriculum.js';
+import { levelData } from '../levelManager.js';
 // Flashcards are replaced by Vocab Recitation progress
 
 export function renderDashboard() {
@@ -17,13 +17,13 @@ export function renderDashboard() {
   
   // Calculate Stats
   const completedCount = progress.completedLessons.length;
-  const totalLessons = curriculum.length;
+  const totalLessons = levelData.curriculum.length;
   const completionPercentage = Math.round((completedCount / totalLessons) * 100);
   
   // Calculate total and recited words dynamically
-  const totalWords = curriculum.reduce((sum, lesson) => sum + (lesson.vocabulary ? lesson.vocabulary.length : 0), 0);
+  const totalWords = levelData.curriculum.reduce((sum, lesson) => sum + (lesson.vocabulary ? lesson.vocabulary.length : 0), 0);
   const recitedWordsCount = (progress.completedVocabRecitations || []).reduce((sum, lessonId) => {
-    const lesson = curriculum.find(l => l.id === lessonId);
+    const lesson = levelData.curriculum.find(l => l.id === lessonId);
     return sum + (lesson && lesson.vocabulary ? lesson.vocabulary.length : 0);
   }, 0);
   const completedVocabCount = (progress.completedVocabRecitations || []).length;
@@ -39,11 +39,11 @@ export function renderDashboard() {
     : 0;
 
   // Find next lesson to study
-  let nextLesson = curriculum[0];
-  for (let i = 0; i < curriculum.length; i++) {
-    const id = curriculum[i].id;
+  let nextLesson = levelData.curriculum[0];
+  for (let i = 0; i < levelData.curriculum.length; i++) {
+    const id = levelData.curriculum[i].id;
     if (!progress.completedLessons.includes(id)) {
-      nextLesson = curriculum[i];
+      nextLesson = levelData.curriculum[i];
       break;
     }
   }
@@ -61,7 +61,7 @@ export function renderDashboard() {
       <div class="welcome-text">
         <h1>Welcome Back, Champion!</h1>
         <div class="tutor-arabic-card dashboard-welcome-banner-tutor">
-          <p class="ar-text">جاهز تكمل رحلتك النهاردة؟ كل خطوة بتاخدها بتقربك من إتقان المستوى A1. كمل مذاكرة وحل الكويزات عشان تلم نقاط XP وتفتح الشهادة الذهبية!</p>
+          <p class="ar-text">جاهز تكمل رحلتك النهاردة؟ كل خطوة بتاخدها بتقربك من إتقان المستوى ${levelData.currentLevel}. كمل مذاكرة وحل الكويزات عشان تلم نقاط XP وتفتح الشهادة الذهبية!</p>
         </div>
         <div class="welcome-action">
           ${allLessonsDone 
@@ -136,7 +136,7 @@ export function renderDashboard() {
       <div class="dashboard-panel">
         <h3 class="panel-title">Current Study Path</h3>
         <div class="roadmap-preview">
-          ${curriculum.slice(0, 4).map(lesson => {
+          ${levelData.curriculum.slice(0, 4).map(lesson => {
             const isCompleted = progress.completedLessons.includes(lesson.id);
             const isUnlocked = lesson.id === 1 || progress.completedLessons.includes(lesson.id - 1);
             let statusClass = "locked";

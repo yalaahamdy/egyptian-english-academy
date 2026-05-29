@@ -3,7 +3,7 @@
  * Egyptian English Academy
  */
 
-import { curriculum } from './data/curriculum.js';
+import { levelData } from './levelManager.js';
 
 const STORAGE_KEY = "egyptian_english_academy_progress";
 
@@ -120,7 +120,7 @@ export function completePractice(lessonId) {
 export function checkAndCompleteLesson(lessonId) {
   const progress = getProgress();
   const idNum = parseInt(lessonId);
-  const lesson = curriculum.find(l => l.id === idNum);
+  const lesson = levelData.curriculum.find(l => l.id === idNum);
   if (!lesson) return;
 
   const totalQuestions = lesson.quiz ? lesson.quiz.length : 15;
@@ -160,13 +160,13 @@ export function addXP(amount) {
   saveProgress(progress);
 }
 
-export function saveFinalTestScore(score, name) {
+export function saveFinalTestScore(score, name, isPassed = false) {
   const progress = getProgress();
   progress.finalTestScore = score;
   if (name) {
     progress.fullName = name;
   }
-  if (score >= 40) {
+  if (isPassed || score >= 40) {
     progress.xp += 300;
   } else {
     progress.xp += 50;

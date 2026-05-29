@@ -4,10 +4,9 @@
  * Strictly English UI, isolated Egyptian Arabic tutoring content.
  */
 
-import { flashcards } from '../data/flashcards.js';
+import { levelData } from '../levelManager.js';
 import { speakText } from './lessonViewer.js';
 import { getProgress, updateCardStatus } from '../storage.js';
-import { curriculum } from '../data/curriculum.js';
 
 let searchQuery = "";
 let filterLesson = "all";
@@ -18,7 +17,7 @@ export function renderDictionary() {
 
   container.innerHTML = `
     <div class="section-header">
-      <h1 class="section-title">A1 English Vocabulary Dictionary</h1>
+      <h1 class="section-title">${levelData.currentLevel} English Vocabulary Dictionary</h1>
       <p class="section-subtitle">Search and study all vocabulary words from the curriculum.</p>
       
       <div class="tutor-arabic-card dict-header-tutor">
@@ -43,7 +42,7 @@ export function renderDictionary() {
           <span class="dict-filter-lesson-label">Lesson:</span>
           <select id="dict-filter-lesson" class="filter-select" onchange="window.handleDictLessonFilter(this.value)">
             <option value="all" ${filterLesson === 'all' ? 'selected' : ''}>All Lessons</option>
-            ${curriculum.map(l => `
+            ${levelData.curriculum.map(l => `
               <option value="${l.id}" ${filterLesson === String(l.id) ? 'selected' : ''}>Lesson ${l.id}: ${l.title}</option>
             `).join('')}
           </select>
@@ -65,7 +64,7 @@ function renderGrid() {
   const progress = getProgress();
   const query = searchQuery.toLowerCase().trim();
 
-  const filtered = flashcards.filter(card => {
+  const filtered = levelData.flashcards.filter(card => {
     // 1. Filter by Lesson
     if (filterLesson !== "all" && card.lessonId !== parseInt(filterLesson)) {
       return false;

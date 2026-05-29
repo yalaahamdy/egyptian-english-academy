@@ -5,7 +5,7 @@
  */
 
 import { getProgress, completeVocabRecitation } from '../storage.js';
-import { curriculum } from '../data/curriculum.js';
+import { levelData } from '../levelManager.js';
 import { speakText } from './lessonViewer.js';
 import { sfx } from '../audioEffects.js';
 
@@ -25,7 +25,7 @@ export function initVocabCenter(urlParams = {}) {
   if (urlParams.lesson) {
     currentLessonId = parseInt(urlParams.lesson);
   } else {
-    const nextIncomplete = curriculum.find(l => {
+    const nextIncomplete = levelData.curriculum.find(l => {
       const isQuizPassed = (progress.quizScores[l.id] || 0) >= Math.ceil((l.quiz ? l.quiz.length : 10) * 0.6);
       const isVocabPassed = progress.completedVocabRecitations && progress.completedVocabRecitations.includes(l.id);
       return !isQuizPassed || !isVocabPassed;
@@ -91,7 +91,7 @@ export function initVocabCenter(urlParams = {}) {
   };
 
   window.onVocabSpellingInput = function(val) {
-    const lesson = curriculum.find(l => l.id === currentLessonId);
+    const lesson = levelData.curriculum.find(l => l.id === currentLessonId);
     const v = lesson.vocabulary[reciteIndex];
     
     if (val.length > v.word.length) {
@@ -115,7 +115,7 @@ function renderVocabCenter() {
   if (!container) return;
 
   const progress = getProgress();
-  const lesson = curriculum.find(l => l.id === currentLessonId);
+  const lesson = levelData.curriculum.find(l => l.id === currentLessonId);
   
   if (!lesson) {
     container.innerHTML = `<p>Lesson not found.</p>`;
@@ -143,7 +143,7 @@ function renderVocabCenter() {
       <div class="vocab-selectors">
         <span class="vocab-selectors-label">Choose Lesson:</span>
         <select class="filter-select" onchange="window.changeVocabLesson(this.value)">
-          ${curriculum.map(l => {
+          ${levelData.curriculum.map(l => {
             const isLUnlocked = l.id === 1 || progress.completedLessons.includes(l.id - 1);
             const isLRecited = progress.completedVocabRecitations && progress.completedVocabRecitations.includes(l.id);
             return `
@@ -349,7 +349,7 @@ function verifySpellingAnswer() {
   const feedbackEl = document.getElementById("vocab-recite-feedback");
   if (!inputEl || !feedbackEl) return;
 
-  const lesson = curriculum.find(l => l.id === currentLessonId);
+  const lesson = levelData.curriculum.find(l => l.id === currentLessonId);
   const v = lesson.vocabulary[reciteIndex];
   
   const cleanInput = typedSpelling.trim().toLowerCase();
@@ -484,7 +484,7 @@ function toggleVocabSpeechRecognition() {
 
   if (!micBtn || !statusTxt || !feedbackEl) return;
 
-  const lesson = curriculum.find(l => l.id === currentLessonId);
+  const lesson = levelData.curriculum.find(l => l.id === currentLessonId);
   const v = lesson.vocabulary[reciteIndex];
   const targetWord = v.word;
 
@@ -593,7 +593,7 @@ function renderFinishedTab(lesson) {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-left"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
           <span>Back to Roadmap</span>
         </a>
-        ${lesson.id < curriculum.length ? `
+        ${lesson.id < levelData.curriculum.length ? `
           <button class="btn btn-secondary btn-next-svg-adjust" onclick="window.changeVocabLesson(${lesson.id + 1})">
             <span>Study Next Lesson Words</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
