@@ -14,8 +14,12 @@ import { unit13 } from './units/unit13.js';
 import { unit14 } from './units/unit14.js';
 import { unit15 } from './units/unit15.js';
 import { unit16 } from './units/unit16.js';
+import { unit17 } from './units/unit17.js';
+import { unit18 } from './units/unit18.js';
+import { unit19 } from './units/unit19.js';
+import { unit20 } from './units/unit20.js';
 
-// List of active units for Level B1 Phase 4
+// List of active units for Level B1 Phase 5
 export const units = [
   unit1,
   unit2,
@@ -32,7 +36,11 @@ export const units = [
   unit13,
   unit14,
   unit15,
-  unit16
+  unit16,
+  unit17,
+  unit18,
+  unit19,
+  unit20
 ];
 
 // Flat array of all lessons (sequential IDs 1 to 48)
