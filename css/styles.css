@@ -446,7 +446,7 @@ button {
   font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: -0.5px;
-  background: linear-gradient(to right, #fff, var(--primary));
+  background: linear-gradient(to right, #00ffeb, var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -745,7 +745,7 @@ button {
   font-size: 2.5rem;
   font-weight: 900;
   letter-spacing: -1.5px;
-  background: linear-gradient(135deg, var(--text-main) 40%, var(--primary));
+  background: linear-gradient(to right, #00ffeb, var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1807,7 +1807,7 @@ button {
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: -0.5px;
-  background: linear-gradient(to right, #fff, var(--primary));
+  background: linear-gradient(to right, #00ffeb, var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
