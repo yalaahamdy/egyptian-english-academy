@@ -71,7 +71,7 @@ export function renderDashboard() {
         </div>
       </div>
       <div>
-        <img class="welcome-image-mock" src="././icon/logo.png" alt="EE Academy Logo">
+        <img class="welcome-image-mock" src="icon/welcome_hero.webp" alt="EE Academy Logo" fetchpriority="high">
       </div>
     </div>
 
