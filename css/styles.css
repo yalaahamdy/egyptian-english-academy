@@ -1829,7 +1829,7 @@ button {
    ============================================================ */
 .roadmap-unit-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 12px;
   margin-bottom: 32px;
 }
@@ -1950,7 +1950,6 @@ button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100px;
 }
 
 .unit-lock-overlay {
@@ -2240,7 +2239,6 @@ button {
 /* Responsiveness */
 @media (max-width: 600px) {
   .roadmap-unit-grid {
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
     gap: 8px;
   }
   
